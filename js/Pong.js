@@ -7,14 +7,18 @@ export default class Pong {
   constructor({ canvas, paddleSize, puckSize }) {
     this.#canvas = canvas;
     this.paddles = [
+      // bottom paddle
       new Paddle({
         size: paddleSize,
-        position: new Vector(10, this.canvas.center.y),
+        trackStart: new Vector(0, 10),
+        trackEnd: new Vector(this.canvas.width, 10),
         canvas: this.canvas,
       }),
+      // top paddle
       new Paddle({
         size: paddleSize,
-        position: new Vector(this.canvas.width - 10, this.canvas.center.y),
+        trackStart: new Vector(this.canvas.width, this.canvas.height - 10),
+        trackEnd: new Vector(0, this.canvas.height - 10),
         canvas: this.canvas,
       }),
     ];
@@ -24,11 +28,22 @@ export default class Pong {
     });
   }
 
+  update() {
+    this.puck.update();
+    for (const paddle of this.paddles) paddle.update();
+  }
+
   draw() {
+    this.canvas.clear();
     this.puck.draw();
-    for (const paddle of this.paddles) {
-      paddle.draw();
-    }
+    for (const paddle of this.paddles) paddle.draw();
+  }
+
+  play() {
+    this.update();
+    this.draw();
+
+    requestAnimationFrame(this.play.bind(this));
   }
 
   get canvas() {

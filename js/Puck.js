@@ -12,11 +12,20 @@ export default class Puck {
 
   reset() {
     this.position = this.#canvas.center;
-    this.#direction = Vector.random();
+    this.#direction = Math.random() * Math.PI * 2;
     this.speed = 5;
+    this.velocity = Vector.fromPolar(this.speed, this.#direction);
+  }
+
+  update() {
+    this.position.add(this.velocity);
   }
 
   draw() {
-    this.#canvas.circle(this.position, this.size);
+    this.canvas.circle(this.position, this.size).fill();
+  }
+
+  get canvas() {
+    return this.#canvas;
   }
 }

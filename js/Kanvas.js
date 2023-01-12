@@ -158,7 +158,7 @@ export default class Kanvas {
   }
 
   clear() {
-    this.canvas.height = this.height;
+    this.element.height = this.height;
 
     return this;
   }
