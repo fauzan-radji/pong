@@ -6,43 +6,43 @@ export default class Paddle {
   #canvas;
   #corners;
   #angle;
+  #controller;
+  #t;
 
-  constructor({ size, trackStart, trackEnd, canvas }) {
+  constructor({ size, trackStart, trackEnd, canvas, controller }) {
     this.#canvas = canvas;
+    this.#controller = controller;
+    this.#controller.userData = this;
+    this.size = size;
+    this.#width = size;
+    this.#height = size * 0.1;
+
     this.track = {
       start: trackStart,
       end: trackEnd,
     };
     this.t = 0.5;
-    this.position = Vector.lerp(this.track.start, this.track.end, this.t);
+    this.#angle = Vector.angle(this.track.start, this.track.end);
+    this.#calculatePosition();
+  }
 
-    this.size = size;
-    this.#width = size;
-    this.#height = size * 0.1;
+  #calculatePosition() {
+    this.position = Vector.lerp(this.track.start, this.track.end, this.t);
+    const left = this.position.x - this.width * 0.5;
+    const right = this.position.x + this.width * 0.5;
+    const top = this.position.y - this.height * 1.5;
+    const bottom = this.position.y - this.height * 0.5;
 
     this.#corners = [
       // top left corner
-      new Vector(
-        this.position.x - this.width * 0.5,
-        this.position.y - this.height * 0.5
-      ),
+      new Vector(left, top),
       // top right corner
-      new Vector(
-        this.position.x + this.width * 0.5,
-        this.position.y - this.height * 0.5
-      ),
+      new Vector(right, top),
       // bottom right corner
-      new Vector(
-        this.position.x + this.width * 0.5,
-        this.position.y + this.height * 0.5
-      ),
+      new Vector(right, bottom),
       // bottom left corner
-      new Vector(
-        this.position.x - this.width * 0.5,
-        this.position.y + this.height * 0.5
-      ),
+      new Vector(left, bottom),
     ];
-    this.#angle = Vector.angle(this.track.start, this.track.end);
     for (const corner of this.#corners) {
       corner.subtract(this.position);
       corner.rotateZ(this.#angle);
@@ -50,7 +50,18 @@ export default class Paddle {
     }
   }
 
-  update() {}
+  update() {
+    this.#controller.control();
+    this.#calculatePosition();
+  }
+
+  goRight() {
+    this.t += 0.01;
+  }
+
+  goLeft() {
+    this.t -= 0.01;
+  }
 
   draw() {
     this.canvas
@@ -64,6 +75,14 @@ export default class Paddle {
     for (let i = 1; i < this.#corners.length; i++)
       this.canvas.lineTo(this.#corners[i]);
     this.canvas.closePath().fill();
+  }
+
+  set t(t) {
+    this.#t = Math.min(Math.max(t, 0), 1);
+  }
+
+  get t() {
+    return this.#t;
   }
 
   get canvas() {
