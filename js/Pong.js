@@ -11,8 +11,8 @@ export default class Pong {
       // bottom paddle
       new Paddle({
         size: paddleSize,
-        trackStart: new Vector(0, this.canvas.height),
-        trackEnd: new Vector(this.canvas.width, this.canvas.height),
+        trackStart: new Vector(this.canvas.left, this.canvas.bottom),
+        trackEnd: new Vector(this.canvas.right, this.canvas.bottom),
         canvas: this.canvas,
         controller: new Controller({
           ArrowRight: function (p) {
@@ -26,8 +26,8 @@ export default class Pong {
       // top paddle
       new Paddle({
         size: paddleSize,
-        trackStart: new Vector(this.canvas.width, 0),
-        trackEnd: new Vector(0, 0),
+        trackStart: new Vector(this.canvas.right, this.canvas.top),
+        trackEnd: new Vector(this.canvas.left, this.canvas.top),
         canvas: this.canvas,
         controller: new Controller({
           KeyD: function (p) {

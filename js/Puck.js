@@ -11,7 +11,7 @@ export default class Puck {
   }
 
   reset() {
-    this.position = this.#canvas.center;
+    this.position = new Vector(0, 0);
     this.#direction = Math.random() * Math.PI * 2;
     this.speed = 5;
     this.velocity = Vector.fromPolar(this.speed, this.#direction);

@@ -43,17 +43,23 @@ export default class Kanvas {
     this.width = width;
     this.height = height;
 
-    this.center = new Vector(
-      Math.round(this.width / 2),
-      Math.round(this.height / 2)
-    );
+    this.top = height * -0.5;
+    this.bottom = height * 0.5;
+    this.left = width * -0.5;
+    this.right = width * 0.5;
 
     this.onResize();
     return this;
   }
 
   drawImage(image, point, width, height) {
-    this.ctx.drawImage(image, point.x, point.y, width, height);
+    this.ctx.drawImage(
+      image,
+      point.x + this.right,
+      point.y + this.bottom,
+      width,
+      height
+    );
 
     return this;
   }
@@ -78,32 +84,43 @@ export default class Kanvas {
   }
 
   circle(point, radius) {
-    this.ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI);
+    this.ctx.arc(
+      point.x + this.right,
+      point.y + this.bottom,
+      radius,
+      0,
+      2 * Math.PI
+    );
 
     return this;
   }
 
   rect(point, width, height) {
-    this.ctx.rect(point.x - width * 0.5, point.y - height * 0.5, width, height);
+    this.ctx.rect(
+      point.x + this.right - width * 0.5,
+      point.y + this.bottom - height * 0.5,
+      width,
+      height
+    );
 
     return this;
   }
 
   line(point1, point2) {
-    this.ctx.moveTo(point1.x, point1.y);
-    this.ctx.lineTo(point2.x, point2.y);
+    this.ctx.moveTo(point1.x + this.right, point1.y + this.bottom);
+    this.ctx.lineTo(point2.x + this.right, point2.y + this.bottom);
 
     return this;
   }
 
   moveTo(point) {
-    this.ctx.moveTo(point.x, point.y);
+    this.ctx.moveTo(point.x + this.right, point.y + this.bottom);
 
     return this;
   }
 
   lineTo(point) {
-    this.ctx.lineTo(point.x, point.y);
+    this.ctx.lineTo(point.x + this.right, point.y + this.bottom);
 
     return this;
   }
@@ -121,8 +138,8 @@ export default class Kanvas {
     this.fillStyle = fillStyle;
     this.strokeStyle = strokeStyle;
     this.font = `${size}px Arial`;
-    this.ctx.fillText(text, at.x, at.y);
-    this.ctx.strokeText(text, at.x, at.y);
+    this.ctx.fillText(text, at.x + this.right, at.y + this.bottom);
+    this.ctx.strokeText(text, at.x + this.right, at.y + this.bottom);
   }
 
   beginPath() {
@@ -170,7 +187,7 @@ export default class Kanvas {
    * @return {Kanvas} this Kanvas object
    */
   translate(point) {
-    this.ctx.translate(point.x, point.y);
+    this.ctx.translate(point.x + this.right, point.y);
 
     return this;
   }
