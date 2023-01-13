@@ -4,13 +4,11 @@ import Pong from "./Pong.js";
 const pong = new Pong({
   canvas: new Kanvas({
     id: "canvas",
-    // width: 600 * 0.66,
-    // height: 600,
     width: innerWidth,
     height: innerHeight,
   }),
-  paddleSize: 100,
   puckSize: 10,
+  playerCount: 2,
 });
 
 pong.draw();

@@ -121,8 +121,10 @@ export default class Kanvas {
   }
 
   line(point1, point2) {
+    this.beginPath();
     this.ctx.moveTo(point1.x + this.right, point1.y + this.bottom);
     this.ctx.lineTo(point2.x + this.right, point2.y + this.bottom);
+    this.closePath();
 
     return this;
   }

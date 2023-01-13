@@ -10,17 +10,18 @@ export default class Paddle {
   #controller;
   #t;
 
-  constructor({ size, trackStart, trackEnd, canvas, controller }) {
+  constructor({ trackStart, trackEnd, canvas, controller }) {
     this.#canvas = canvas;
     this.#controller = controller;
     this.#controller.userData = this;
-    this.size = size;
-    this.#width = size;
-    this.#height = size * 0.1;
 
     this.track = new Line(trackStart, trackEnd);
     this.t = 0.5;
     this.#angle = Vector.angle(this.track.start, this.track.end);
+
+    this.size = this.track.length * 0.25;
+    this.#width = this.size;
+    this.#height = this.size * 0.1;
     this.#calculatePosition();
   }
 
@@ -63,10 +64,8 @@ export default class Paddle {
 
   draw() {
     this.canvas
-      .beginPath()
       .line(this.track.start, this.track.end)
-      .closePath()
-      .stroke();
+      .stroke({ color: "#f00" });
 
     // draw the paddle
     this.canvas.beginPath().moveTo(this.#corners[0]);

@@ -8,49 +8,41 @@ export default class Pong {
   #canvas;
   #boundaries;
   #corners;
-  constructor({ canvas, paddleSize, puckSize }) {
+  constructor({ canvas, puckSize, playerCount }) {
     this.#canvas = canvas;
-    this.paddles = [
-      // bottom paddle
-      new Paddle({
-        size: paddleSize,
-        trackStart: new Vector(this.canvas.left, this.canvas.bottom),
-        trackEnd: new Vector(this.canvas.right, this.canvas.bottom),
-        canvas: this.canvas,
-        controller: new Controller({
-          ArrowRight: function (p) {
-            p.goRight();
-          },
-          ArrowLeft: function (p) {
-            p.goLeft();
-          },
-        }),
-      }),
-      // top paddle
-      new Paddle({
-        size: paddleSize,
-        trackStart: new Vector(this.canvas.right, this.canvas.top),
-        trackEnd: new Vector(this.canvas.left, this.canvas.top),
-        canvas: this.canvas,
-        controller: new Controller({
-          KeyD: function (p) {
-            p.goRight();
-          },
-          KeyA: function (p) {
-            p.goLeft();
-          },
-        }),
-      }),
-    ];
+    this.#initBoundary(playerCount * 2); // boundary is twice of players
+
+    this.paddles = [];
+    for (let i = 0; i < this.boundaries.length; i += 2) {
+      const boundary = this.boundaries[i];
+
+      this.paddles.push(
+        new Paddle({
+          // since boundary line is going from right to left,
+          // and paddle track is going from left to right
+          // then we need to inverse the start and end
+          trackStart: boundary.end,
+          trackEnd: boundary.start,
+          canvas: this.canvas,
+          controller: new Controller({
+            ArrowRight: function (p) {
+              p.goRight();
+            },
+            ArrowLeft: function (p) {
+              p.goLeft();
+            },
+          }),
+        })
+      );
+    }
     this.puck = new Puck({
       size: puckSize,
       canvas: this.canvas,
       pong: this,
     });
-    this.#initBoundary();
   }
 
-  #initBoundary() {
+  #initBoundary(boundaryCount) {
     this.#boundaries = [];
     this.#corners = [];
 
@@ -58,8 +50,7 @@ export default class Pong {
       this.canvas.width * 0.5,
       this.canvas.height * 0.5
     );
-    const sidesCount = this.paddles.length * 2;
-    const angle = (Math.PI * 2) / sidesCount;
+    const angle = +((Math.PI * 2) / boundaryCount).toFixed(4);
     for (let i = 0; i < Math.PI * 2; i += angle) {
       const ninetyDegrees = Math.PI * 0.5;
       const halfAngle = angle * 0.5;
@@ -87,11 +78,11 @@ export default class Pong {
 
   draw() {
     this.canvas.clear();
+    for (const boundary of this.boundaries)
+      this.canvas.line(boundary.start, boundary.end).stroke({ color: "#fff" });
+
     this.puck.draw();
     for (const paddle of this.paddles) paddle.draw();
-
-    for (const boundary of this.boundaries)
-      this.canvas.line(boundary.start, boundary.end).stroke();
   }
 
   play() {

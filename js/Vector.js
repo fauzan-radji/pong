@@ -7,6 +7,14 @@ export default class Vector {
   }
 
   /**
+   * copying this vector
+   * @returns {Vector} new Vector that has the same value as this vector
+   */
+  copy() {
+    return new Vector(this.x, this.y, this.z, this.w);
+  }
+
+  /**
    * Projecting 3D matrix to 2D matrix
    * @param {number} distance
    * @returns
@@ -176,9 +184,9 @@ export default class Vector {
    * @returns {Vector}
    */
   multiply(k) {
-    this.x *= v.x;
-    this.y *= v.y;
-    this.z *= v.z;
+    this.x *= k;
+    this.y *= k;
+    this.z *= k;
 
     return this;
   }
@@ -189,13 +197,17 @@ export default class Vector {
    * @returns {Vector}
    */
   divide(k) {
-    return new Vector(this.x / k, this.y / k, this.z / k);
+    this.x /= k;
+    this.y /= k;
+    this.z /= k;
+
+    return this;
   }
 
   normalize() {
     const length = Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
 
-    return new Vector(this.x / length, this.y / length, this.z / length);
+    return this.divide(length);
   }
 
   /**
@@ -335,6 +347,22 @@ export default class Vector {
   }
 
   /**
+   * Divide v Vector by k
+   * @param {Vector} v - a vector to divide
+   * @param {number} k - scaling factor
+   * @returns {Vector}
+   */
+  static divide(v, k) {
+    return new Vector(v.x / k, v.y / k, v.z / k);
+  }
+
+  static normalize(v) {
+    const length = Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
+
+    return Vector.divide(v, length);
+  }
+
+  /**
    * Linear interpolation between two vector with given t value
    * @param {Vector} start
    * @param {Vector} end
@@ -342,6 +370,12 @@ export default class Vector {
    */
   static lerp(start, end, t) {
     return Vector.add(Vector.multiply(Vector.subtract(end, start), t), start);
+  }
+
+  static distance(v1, v2) {
+    const v = Vector.subtract(v2, v1);
+
+    return Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2);
   }
 
   /**
