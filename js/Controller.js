@@ -7,13 +7,13 @@ export default class Controller {
     this.#handler = handler;
 
     window.addEventListener("keydown", (e) => {
-      e.preventDefault();
+      // e.preventDefault();
       const keyCode = e.code;
       if (!this.pressed.includes(keyCode)) this.pressed.push(keyCode);
     });
 
     window.addEventListener("keyup", (e) => {
-      e.preventDefault();
+      // e.preventDefault();
       const keyCode = e.code;
       if (this.pressed.includes(keyCode)) {
         // remove keyCode from this.pressed

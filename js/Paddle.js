@@ -1,3 +1,4 @@
+import Line from "./Line.js";
 import Vector from "./Vector.js";
 
 export default class Paddle {
@@ -17,10 +18,7 @@ export default class Paddle {
     this.#width = size;
     this.#height = size * 0.1;
 
-    this.track = {
-      start: trackStart,
-      end: trackEnd,
-    };
+    this.track = new Line(trackStart, trackEnd);
     this.t = 0.5;
     this.#angle = Vector.angle(this.track.start, this.track.end);
     this.#calculatePosition();

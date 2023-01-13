@@ -29,6 +29,7 @@ export default class Kanvas {
     this.lineDash = [];
     this.lineDashOffset = 0;
 
+    this.center = new Vector(0, 0);
     this.resize(width, height);
   }
 
@@ -91,6 +92,7 @@ export default class Kanvas {
       0,
       2 * Math.PI
     );
+    this.closePath();
 
     return this;
   }
@@ -102,6 +104,18 @@ export default class Kanvas {
       width,
       height
     );
+    this.closePath();
+
+    return this;
+  }
+
+  polygon(point, sidesCount, radius) {
+    const angle = (Math.PI * 2) / sidesCount;
+    this.beginPath().moveTo(Vector.fromPolar(radius, 0).add(point));
+    for (let i = angle; i < Math.PI * 2; i += angle)
+      this.lineTo(Vector.fromPolar(radius, i).add(point));
+
+    this.closePath();
 
     return this;
   }
