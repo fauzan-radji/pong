@@ -14,7 +14,8 @@ const pong = new Pong({
 pong.draw();
 
 window.addEventListener("click", () => {
-  pong.play();
+  if (pong.isPlaying) pong.pause();
+  else pong.play();
 });
 
 window.addEventListener("resize", () => {

@@ -8,21 +8,14 @@ export default class Pong {
   #canvas;
   #boundaries;
   #corners;
+  #isPlaying;
   constructor({ canvas, puckSize, playerCount }) {
     this.#canvas = canvas;
-    this.#initBoundary(playerCount * 2); // boundary is twice of players
 
     this.paddles = [];
-    for (let i = 0; i < this.boundaries.length; i += 2) {
-      const boundary = this.boundaries[i];
-
+    for (let i = 0; i < playerCount; i++)
       this.paddles.push(
         new Paddle({
-          // since boundary line is going from right to left,
-          // and paddle track is going from left to right
-          // then we need to inverse the start and end
-          trackStart: boundary.end,
-          trackEnd: boundary.start,
           canvas: this.canvas,
           controller: new Controller({
             ArrowRight: function (p) {
@@ -34,15 +27,19 @@ export default class Pong {
           }),
         })
       );
-    }
+
+    this.#initBoundary();
+
     this.puck = new Puck({
       size: puckSize,
       canvas: this.canvas,
       pong: this,
     });
+
+    this.#isPlaying = false;
   }
 
-  #initBoundary(boundaryCount) {
+  #initBoundary() {
     this.#boundaries = [];
     this.#corners = [];
 
@@ -50,7 +47,7 @@ export default class Pong {
       this.canvas.width * 0.5,
       this.canvas.height * 0.5
     );
-    const angle = +((Math.PI * 2) / boundaryCount).toFixed(4);
+    const angle = +((Math.PI * 2) / (this.paddles.length * 2)).toFixed(4);
     for (let i = 0; i < Math.PI * 2; i += angle) {
       const ninetyDegrees = Math.PI * 0.5;
       const halfAngle = angle * 0.5;
@@ -62,7 +59,13 @@ export default class Pong {
     for (let i = 0; i < this.#corners.length; i++) {
       const j = (i + 1) % this.#corners.length;
       const boundary = new Line(this.#corners[i], this.#corners[j]);
-      this.boundaries.push(boundary);
+      if (i % 2 === 0)
+        // set paddle track
+        // since boundary line is going from right to left,
+        // and paddle track is going from left to right
+        // then we need to inverse the start and end
+        this.paddles[i / 2].resize(boundary.end, boundary.start);
+      else this.boundaries.push(boundary);
     }
   }
 
@@ -85,11 +88,19 @@ export default class Pong {
     for (const paddle of this.paddles) paddle.draw();
   }
 
-  play() {
+  #animate() {
     this.update();
     this.draw();
+    if (this.#isPlaying) requestAnimationFrame(this.#animate.bind(this));
+  }
 
-    requestAnimationFrame(this.play.bind(this));
+  play() {
+    this.#isPlaying = true;
+    this.#animate();
+  }
+
+  pause() {
+    this.#isPlaying = false;
   }
 
   get canvas() {
@@ -98,5 +109,9 @@ export default class Pong {
 
   get boundaries() {
     return this.#boundaries;
+  }
+
+  get isPlaying() {
+    return this.#isPlaying;
   }
 }

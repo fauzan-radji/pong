@@ -38,6 +38,11 @@ export default class Puck {
         this.velocity = Vector.multiply(this.#direction, this.#speed);
       }
     }
+
+    for (const paddle of this.pong.paddles) {
+      const intersection = Line.intersect(this.#positionLine, paddle.track);
+      if (intersection) this.reset();
+    }
   }
 
   update() {
