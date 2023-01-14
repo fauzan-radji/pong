@@ -7,7 +7,7 @@ const pong = new Pong({
     width: innerWidth,
     height: innerHeight,
   }),
-  puckSize: 10,
+  ballSize: 10,
   playerCount: 2,
 });
 

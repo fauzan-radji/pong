@@ -1,7 +1,7 @@
 import Controller from "./Controller.js";
 import Line from "./Line.js";
 import Paddle from "./Paddle.js";
-import Puck from "./Puck.js";
+import Ball from "./Ball.js";
 import Vector from "./Vector.js";
 
 export default class Pong {
@@ -9,7 +9,7 @@ export default class Pong {
   #boundaries;
   #corners;
   #isPlaying;
-  constructor({ canvas, puckSize, playerCount }) {
+  constructor({ canvas, ballSize, playerCount }) {
     this.#canvas = canvas;
 
     this.paddles = [];
@@ -30,8 +30,8 @@ export default class Pong {
 
     this.#initBoundary();
 
-    this.puck = new Puck({
-      size: puckSize,
+    this.ball = new Ball({
+      size: ballSize,
       canvas: this.canvas,
       pong: this,
     });
@@ -75,7 +75,7 @@ export default class Pong {
   }
 
   update() {
-    this.puck.update();
+    this.ball.update();
     for (const paddle of this.paddles) paddle.update();
   }
 
@@ -84,7 +84,7 @@ export default class Pong {
     for (const boundary of this.boundaries)
       this.canvas.line(boundary.start, boundary.end).stroke({ color: "#fff" });
 
-    this.puck.draw();
+    this.ball.draw();
     for (const paddle of this.paddles) paddle.draw();
   }
 

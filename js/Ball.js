@@ -1,7 +1,7 @@
 import Line from "./Line.js";
 import Vector from "./Vector.js";
 
-export default class Puck {
+export default class Ball {
   #canvas;
   #direction;
   #pong;
