@@ -85,6 +85,7 @@ export default class Kanvas {
   }
 
   circle(point, radius) {
+    this.beginPath();
     this.ctx.arc(
       point.x + this.right,
       point.y + this.bottom,
@@ -114,7 +115,6 @@ export default class Kanvas {
     this.beginPath().moveTo(Vector.fromPolar(radius, 0).add(point));
     for (let i = angle; i < Math.PI * 2; i += angle)
       this.lineTo(Vector.fromPolar(radius, i).add(point));
-
     this.closePath();
 
     return this;
@@ -203,7 +203,7 @@ export default class Kanvas {
    * @return {Kanvas} this Kanvas object
    */
   translate(point) {
-    this.ctx.translate(point.x + this.right, point.y);
+    this.ctx.translate(point.x + this.right, point.y + this.bottom);
 
     return this;
   }
@@ -231,8 +231,6 @@ export default class Kanvas {
 
     return this;
   }
-
-  set element(element) {}
 
   set fillStyle(color) {
     this.#fillStyle = color;

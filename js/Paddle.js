@@ -9,6 +9,7 @@ export default class Paddle {
   #angle;
   #controller;
   #t;
+  #bounding;
 
   constructor({ canvas, controller }) {
     this.#canvas = canvas;
@@ -41,6 +42,14 @@ export default class Paddle {
       corner.rotateZ(this.#angle);
       corner.add(this.position);
     }
+
+    const [topLeft, topRight, bottomLeft, bottomRight] = this.#corners;
+    this.#bounding = {
+      top: new Line(topLeft, topRight),
+      bottom: new Line(bottomRight, topLeft),
+      right: new Line(topRight, bottomRight),
+      left: new Line(bottomLeft, topLeft),
+    };
   }
 
   update() {
@@ -98,5 +107,18 @@ export default class Paddle {
 
   get height() {
     return this.#height;
+  }
+
+  get top() {
+    return this.#bounding.top;
+  }
+  get bottom() {
+    return this.#bounding.bottom;
+  }
+  get left() {
+    return this.#bounding.left;
+  }
+  get right() {
+    return this.#bounding.right;
   }
 }
