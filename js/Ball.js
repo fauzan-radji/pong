@@ -10,12 +10,26 @@ export default class Ball {
   #size;
   #velocity;
   #position;
+  #diagonals;
 
   constructor({ size, canvas, pong }) {
     this.#canvas = canvas;
     this.#size = size;
     this.#pong = pong;
+
+    // FIXME: When updating position, update all of the properties corresponding to new position; best case to use setter method
+    this.#position = this.canvas.center.copy();
     this.reset();
+
+    this.#diagonals = [];
+    const angle = (Math.PI * 2) / 8;
+    for (let i = angle; i <= Math.PI * 2; i += angle)
+      this.#diagonals.push(
+        new Line(
+          this.#position,
+          Vector.fromPolar(this.#size, +i.toFixed(4)).add(this.#position)
+        )
+      );
   }
 
   reset() {
@@ -23,63 +37,80 @@ export default class Ball {
     this.#direction = Vector.fromPolar(1, randomAngle);
     this.#speed = 5;
     this.#velocity = Vector.multiply(this.#direction, this.#speed);
-    this.#position = this.canvas.center.copy();
+    this.#position.x = 0;
+    this.#position.y = 0;
     this.#positionLine = new Line(this.canvas.center, this.#position); // position line used for collision check
+
+    if (this.#diagonals) this.#updateDiagonals();
   }
 
-  edges() {
-    // check boundaries collision
-    for (const boundary of this.#pong.boundaries) {
-      const intersection = Line.intersect(this.#positionLine, boundary);
-      if (intersection) {
-        // do resolution first
-        this.#position.subtract(
-          Vector.multiply(this.#position, 1 - intersection.offset)
-        );
-
-        // reflect the velocity vector by this boundary
-        this.#direction = boundary.reflect(this.#direction);
-        this.#velocity = Vector.multiply(this.#direction, this.#speed);
-
-        return;
-      }
+  #updateDiagonals() {
+    let angle = 0;
+    const increment = (Math.PI * 2) / 8;
+    for (const diagonal of this.#diagonals) {
+      diagonal.end = Vector.fromPolar(this.#size, angle).add(this.#position);
+      angle += increment;
     }
+  }
 
-    for (const paddle of this.#pong.paddles) {
-      // check paddles track collision
-      const trackIntersection = Line.intersect(
-        this.#positionLine,
-        paddle.track
-      );
-      if (trackIntersection) {
-        this.reset();
-        return;
+  #edges() {
+    for (const diagonal of [this.#positionLine, ...this.#diagonals]) {
+      // check boundaries collision
+      for (const boundary of this.#pong.boundaries) {
+        const intersection = Line.intersect(diagonal, boundary);
+        if (intersection) {
+          // do resolution first
+          this.#position.subtract(
+            Vector.subtract(diagonal.end, diagonal.start).multiply(
+              1 - intersection.offset
+            )
+          );
+
+          // reflect the velocity vector by this boundary
+          this.#direction = boundary.reflect(this.#direction);
+          this.#velocity = Vector.multiply(this.#direction, this.#speed);
+
+          return;
+        }
       }
 
-      // check paddle collision
-      const paddleIntersection = Line.intersect(this.#positionLine, paddle.top);
-      if (paddleIntersection) {
-        // do resolution first
-        this.#position.subtract(
-          Vector.multiply(this.#position, 1 - paddleIntersection.offset)
-        );
+      for (const paddle of this.#pong.paddles) {
+        // check paddle collision
+        const paddleIntersection = Line.intersect(diagonal, paddle.top);
+        if (paddleIntersection) {
+          // do resolution first
+          this.#position.subtract(
+            Vector.subtract(diagonal.end, diagonal.start).multiply(
+              1 - paddleIntersection.offset
+            )
+          );
 
-        // reflect the velocity vector by this boundary
-        this.#direction = paddle.top.reflect(this.#direction);
-        this.#velocity = Vector.multiply(this.#direction, this.#speed);
+          // reflect the velocity vector by this boundary
+          this.#direction = paddle.top.reflect(this.#direction);
+          this.#velocity = Vector.multiply(this.#direction, this.#speed);
 
-        return;
+          return;
+        }
+
+        // check paddles track collision
+        const trackIntersection = Line.intersect(diagonal, paddle.track);
+        if (trackIntersection) {
+          this.reset();
+          this.#pong.pause();
+          return;
+        }
       }
     }
   }
 
   update() {
-    this.edges();
     this.#position.add(this.#velocity);
+    this.#updateDiagonals();
+    this.#edges();
   }
 
   draw() {
-    this.canvas.polygon(this.#position, 12, this.#size).fill();
+    this.canvas.circle(this.#position, this.#size).fill();
     // this.drawVectors();
   }
 
@@ -88,12 +119,20 @@ export default class Ball {
     this.canvas
       .line(
         this.#position,
-        Vector.multiply(this.#direction, 10).add(this.#position)
+        Vector.multiply(this.#direction, Math.max(innerWidth, innerHeight)).add(
+          this.#position
+        )
       )
-      .stroke({ color: "#f00" });
+      .stroke({ color: "#0f0" });
 
-    // position
-    this.canvas.line({ x: 0, y: 0 }, this.#position).stroke({ color: "#fff" });
+    // position line
+    this.canvas
+      .line(this.#positionLine.start, this.#positionLine.end)
+      .stroke({ color: "#fff" });
+
+    // diagonals
+    for (const diagonal of this.#diagonals)
+      this.canvas.line(diagonal.start, diagonal.end).stroke({ color: "#f00" });
   }
 
   get canvas() {

@@ -52,11 +52,11 @@ export default class Pong {
       this.canvas.height * 0.5
     );
     // generate the corners based on how much paddles are
-    const angleIncrement = +((Math.PI * 2) / this.#paddles.length).toFixed(4);
+    const angleIncrement = (Math.PI * 2) / this.#paddles.length;
     for (let i = 0; i < Math.PI * 2; i += angleIncrement) {
       const ninetyDegrees = Math.PI * 0.5;
+      const angle = +i.toFixed(4) + ninetyDegrees;
       const anggleOffset = angleIncrement * 0.2;
-      const angle = i + ninetyDegrees;
       const angle1 = angle - anggleOffset;
       const angle2 = angle + anggleOffset;
       this.#corners.push(Vector.fromPolar(canvasMin, angle1));
