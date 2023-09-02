@@ -11,6 +11,7 @@ export default class Pong {
   #isPlaying;
   #paddles;
   #ball;
+  #debug;
 
   constructor({ canvas, ballSize, playerCount }) {
     this.#canvas = canvas;
@@ -53,7 +54,7 @@ export default class Pong {
     );
     // generate the corners based on how much paddles are
     const angleIncrement = (Math.PI * 2) / this.#paddles.length;
-    for (let i = 0; i < Math.PI * 2; i += angleIncrement) {
+    for (let i = 0; i < Math.PI * 2; i = +(i + angleIncrement).toFixed(4)) {
       const ninetyDegrees = Math.PI * 0.5;
       const angle = +i.toFixed(4) + ninetyDegrees;
       const anggleOffset = angleIncrement * 0.2;
@@ -91,8 +92,8 @@ export default class Pong {
     for (const boundary of this.#boundaries)
       this.canvas.line(boundary.start, boundary.end).stroke({ color: "#fff" });
 
-    this.#ball.draw();
-    for (const paddle of this.#paddles) paddle.draw();
+    this.#ball.draw(this.#debug);
+    for (const paddle of this.#paddles) paddle.draw(this.#debug);
   }
 
   #animate() {
@@ -108,6 +109,14 @@ export default class Pong {
 
   pause() {
     this.#isPlaying = false;
+  }
+
+  set debug(debug) {
+    this.#debug = !!debug;
+  }
+
+  get debug() {
+    return this.#debug;
   }
 
   get canvas() {

@@ -65,7 +65,7 @@ export default class Paddle {
     this.t -= 0.01;
   }
 
-  draw() {
+  draw(debug = false) {
     this.canvas
       .line(this.track.start, this.track.end)
       .stroke({ color: "#f00" });
@@ -75,6 +75,22 @@ export default class Paddle {
     for (let i = 1; i < this.#corners.length; i++)
       this.canvas.lineTo(this.#corners[i]);
     this.canvas.closePath().fill();
+
+    // draw the bounce vector
+    if (debug) {
+      const lerp = 0.5;
+      const source = this.#bounding.top.lerp(lerp);
+      const slope = 0.25;
+      const startAngle = 0 + slope;
+      const endAngle = 1 - slope;
+      const lerpAngle = startAngle + (endAngle - startAngle) * lerp;
+      const vBounce = Vector.fromPolar(
+        50,
+        this.#angle + Math.PI * lerpAngle - Math.PI
+      ).add(source);
+      this.canvas.circle(source, 5).fill("red");
+      this.canvas.line(source, vBounce).stroke({ color: "#ff0" });
+    }
   }
 
   resize(trackStart, trackEnd) {

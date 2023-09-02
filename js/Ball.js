@@ -109,12 +109,13 @@ export default class Ball {
     this.#edges();
   }
 
-  draw() {
+  draw(debug = false) {
     this.canvas.circle(this.#position, this.#size).fill();
-    // this.drawVectors();
+
+    if (debug) this.#drawVectors();
   }
 
-  drawVectors() {
+  #drawVectors() {
     // velocity
     this.canvas
       .line(
@@ -126,9 +127,9 @@ export default class Ball {
       .stroke({ color: "#0f0" });
 
     // position line
-    this.canvas
-      .line(this.#positionLine.start, this.#positionLine.end)
-      .stroke({ color: "#fff" });
+    // this.canvas
+    //   .line(this.#positionLine.start, this.#positionLine.end)
+    //   .stroke({ color: "#fff" });
 
     // diagonals
     for (const diagonal of this.#diagonals)
