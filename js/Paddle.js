@@ -78,18 +78,19 @@ export default class Paddle {
 
     // draw the bounce vector
     if (debug) {
-      const lerp = 0.5;
-      const source = this.#bounding.top.lerp(lerp);
-      const slope = 0.25;
-      const startAngle = 0 + slope;
-      const endAngle = 1 - slope;
-      const lerpAngle = startAngle + (endAngle - startAngle) * lerp;
-      const vBounce = Vector.fromPolar(
-        50,
-        this.#angle + Math.PI * lerpAngle - Math.PI
-      ).add(source);
-      this.canvas.circle(source, 5).fill("red");
-      this.canvas.line(source, vBounce).stroke({ color: "#ff0" });
+      const directionCount = 7;
+      const directions = Array.from(
+        { length: directionCount },
+        (_, i) => i / (directionCount - 1)
+      );
+      for (const direction of directions) {
+        const source = this.#bounding.top.lerp(direction);
+        const vBounce = this.getBounceVector(direction)
+          .multiply(50)
+          .add(source);
+        this.canvas.line(source, vBounce).stroke({ color: "#ff0" });
+        this.canvas.circle(source, 3).fill("red");
+      }
     }
   }
 
@@ -103,6 +104,14 @@ export default class Paddle {
     this.#height = this.size * 0.1;
 
     this.#calculatePosition();
+  }
+
+  getBounceVector(offset) {
+    const slope = 0.0625;
+    const startAngle = 0 + slope;
+    const endAngle = 1 - slope;
+    const lerpAngle = startAngle + (endAngle - startAngle) * offset;
+    return Vector.fromPolar(1, this.#angle + Math.PI * lerpAngle - Math.PI);
   }
 
   set t(t) {

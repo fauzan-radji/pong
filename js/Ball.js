@@ -62,7 +62,7 @@ export default class Ball {
           // do resolution first
           this.#position.subtract(
             Vector.subtract(diagonal.end, diagonal.start).multiply(
-              1 - intersection.offset
+              1 - intersection.offset1
             )
           );
 
@@ -81,12 +81,13 @@ export default class Ball {
           // do resolution first
           this.#position.subtract(
             Vector.subtract(diagonal.end, diagonal.start).multiply(
-              1 - paddleIntersection.offset
+              1 - paddleIntersection.offset1
             )
           );
 
           // reflect the velocity vector by this boundary
-          this.#direction = paddle.top.reflect(this.#direction);
+          // this.#direction = paddle.top.reflect(this.#direction);
+          this.#direction = paddle.getBounceVector(paddleIntersection.offset2);
           this.#velocity = Vector.multiply(this.#direction, this.#speed);
 
           return;

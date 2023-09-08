@@ -11,7 +11,7 @@ const pong = new Pong({
   playerCount: 2,
 });
 
-pong.debug = true;
+pong.debug = false;
 pong.draw();
 
 window.addEventListener("click", () => {
