@@ -1,5 +1,5 @@
-import Kanvas from "./Kanvas.js";
-import Pong from "./Pong.js";
+import Kanvas from "./Kanvas";
+import Pong from "./Pong";
 
 const pong = new Pong({
   canvas: new Kanvas({

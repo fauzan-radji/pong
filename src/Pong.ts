@@ -1,9 +1,9 @@
-import Controller from "./Controller.js";
-import Line from "./Line.js";
-import Paddle from "./Paddle.js";
-import Ball from "./Ball.js";
-import Vector from "./Vector.js";
-import Kanvas from "./Kanvas.js";
+import Controller from "./Controller";
+import Line from "./Line";
+import Paddle from "./Paddle";
+import Ball from "./Ball";
+import Vector from "./Vector";
+import Kanvas from "./Kanvas";
 
 export default class Pong {
   #canvas;

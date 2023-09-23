@@ -1,7 +1,7 @@
-import Line from "./Line.js";
-import Vector from "./Vector.js";
-import Kanvas from "./Kanvas.js";
-import Pong from "./Pong.js";
+import Line from "./Line";
+import Vector from "./Vector";
+import Kanvas from "./Kanvas";
+import Pong from "./Pong";
 
 export default class Ball {
   #canvas;

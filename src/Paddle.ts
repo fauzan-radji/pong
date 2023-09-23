@@ -1,7 +1,7 @@
-import Controller from "./Controller.js";
-import Kanvas from "./Kanvas.js";
-import Line from "./Line.js";
-import Vector from "./Vector.js";
+import Controller from "./Controller";
+import Kanvas from "./Kanvas";
+import Line from "./Line";
+import Vector from "./Vector";
 
 export default class Paddle {
   track: Line;
