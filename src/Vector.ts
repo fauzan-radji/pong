@@ -107,16 +107,6 @@ export default class Vector {
   }
 
   /**
-   * Return signed shortest distance from point to plane, plane normal must be normalised
-   * @param {Vector} plane_p a Point in a Plane
-   * @param {Vector} plane_n a Normal in a Plane
-   * @returns {number}
-   */
-  distance(plane_p: Vector, plane_n: Vector): number {
-    return this.dot(plane_n) - plane_n.dot(plane_p);
-  }
-
-  /**
    * Linear interpolation between two vector with given t value
    * @param {Vector} start
    * @param {Vector} end
@@ -158,7 +148,7 @@ export default class Vector {
   }
 
   /**
-   * Get angle between two vector (start, end)
+   * Get angle between formed by two vectors (start, end)
    * @param {Vector} start
    * @param {Vector} end
    * @returns {number} Angle in radians
